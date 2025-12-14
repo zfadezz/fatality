@@ -3,11 +3,12 @@ local Fatality = loadstring(game:HttpGet(
     "https://raw.githubusercontent.com/4lpaca-pin/Fatality/refs/heads/main/src/source.luau"
 ))()
 
+--// Services
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 
---// Notify
+--// Notifier
 local Notification = Fatality:CreateNotifier()
 
 Fatality:Loader({
@@ -17,7 +18,7 @@ Fatality:Loader({
 
 Notification:Notify({
     Title = "TWISTZZ",
-    Content = "Welcome back, "..LocalPlayer.DisplayName.." Twistzz",
+    Content = "Welcome back, "..LocalPlayer.DisplayName.." ⚽",
     Icon = "clipboard"
 })
 
@@ -28,164 +29,171 @@ local Window = Fatality.new({
 })
 
 --// Menus
-local Rage = Window:AddMenu({ Name = "Reach", Icon = "skull" })
-local Legit = Window:AddMenu({ Name = "Reach Methods", Icon = "target" })
-local Visual = Window:AddMenu({ Name = "Visuals", Icon = "eye" })
-local Misc = Window:AddMenu({ Name = "Misc", Icon = "settings" })
+local Rage   = Window:AddMenu({ Name = "Main Reach",  Icon = "skull" })
+local Legit  = Window:AddMenu({ Name = "Reacts", Icon = "target" })
+local Visual = Window:AddMenu({ Name = "Visuals",     Icon = "eye" })
+local Misc   = Window:AddMenu({ Name = "Misc & Config",        Icon = "settings" })
 
----------------------------------------------------
+----------------------------------------------------
 --// VARIABLES
----------------------------------------------------
-local ReachEnabled = false
-local LegitReach = false
-local BallTP = false
-local ReachDistance = 10
-local ReachSize = 8
-local SelectedLeg = "Right"
+----------------------------------------------------
+local ReachEnabled   = false
+local LegitReach     = false
+local BallTeleport   = false
+local ReachDistance  = 6
+local ReachSize      = 5
+local SelectedFoot   = "Right"
 
----------------------------------------------------
---// BALL FINDER
----------------------------------------------------
+----------------------------------------------------
+--// BALL FINDER (TPS SAFE)
+----------------------------------------------------
 local function GetBall()
-    for _, v in pairs(workspace:GetDescendants()) do
+    for _, v in ipairs(workspace:GetDescendants()) do
         if v:IsA("BasePart") and v.Name:lower():find("ball") then
             return v
         end
     end
 end
 
----------------------------------------------------
---// RAGE REACH
----------------------------------------------------
+----------------------------------------------------
+--// Main REACH
+----------------------------------------------------
 do
-    local ReachSec = Rage:AddSection({
-        Position = "left",
-        Name = "Ball Reach"
+    local ReachSection = Rage:AddSection({
+        Name = "Ball Reach",
+        Position = "left"
     })
 
-    ReachSec:AddToggle({
+    ReachSection:AddToggle({
         Name = "Enable Reach",
-        Callback = function(v)
-            ReachEnabled = v
+        Callback = function(Value)
+            ReachEnabled = Value
         end
     })
 
-    ReachSec:AddSlider({
+    ReachSection:AddSlider({
         Name = "Reach Distance",
-        Default = 10,
         Min = 3,
         Max = 25,
-        Callback = function(v)
-            ReachDistance = v
+        Default = 6,
+        Callback = function(Value)
+            ReachDistance = Value
         end
     })
 
-    ReachSec:AddSlider({
-        Name = "Reach Size",
-        Default = 8,
+    ReachSection:AddSlider({
+        Name = "Reach Vertica",
         Min = 4,
         Max = 20,
-        Callback = function(v)
-            ReachSize = v
+        Default = 5,
+        Callback = function(Value)
+            ReachSize = Value
         end
     })
 
-    ReachSec:AddDropdown({
-        Name = "Foot",
+    ReachSection:AddDropdown({
+        Name = "Foot Selection",
+        Values = { "Right", "Left" },
         Default = "Right",
-        Values = {"Right", "Left"},
-        Callback = function(v)
-            SelectedLeg = v
+        Callback = function(Value)
+            SelectedFoot = Value
         end
     })
 
-    ReachSec:AddToggle({
-        Name = "Ball Teleport         Name = "Ball Teleport", Callback = function(v)
-            BallTP = v
+    ReachSection:AddToggle({
+        Name = "Ball Teleport",
+        Risky = true,
+        Callback = function(Value)
+            BallTeleport = Value
         end
     })
 end
 
----------------------------------------------------
---// LEGIT REACH
----------------------------------------------------
+----------------------------------------------------
+--// OTHER REACT
+----------------------------------------------------
 do
-    local LegitSec = Legit:AddSection({
-        Position = "left",
-        Name = "Soft Reach"
+    local LegitSection = Legit:AddSection({
+        Name = "React",
+        Position = "left"
     })
 
-    LegitSec:AddToggle({
-        Name = "Enable Legit Reach",
-        Callback = function(v)
-            LegitReach = v
+    LegitSection:AddToggle({
+        Name = "Enable Better Reach",
+        Callback = function(Value)
+            LegitReach = Value
         end
     })
 
-    LegitSec:AddSlider({
-        Name = "Legit Distance",
-        Default = 6,
+    LegitSection:AddSlider({
+        Name = "React Slider",
         Min = 3,
         Max = 12,
-        Callback = function(v)
-            ReachDistance = v
+        Default = 6,
+        Callback = function(Value)
+            ReachDistance = Value
         end
     })
 end
 
----------------------------------------------------
+----------------------------------------------------
 --// VISUALS
----------------------------------------------------
+----------------------------------------------------
 do
-    local VisualSec = Visual:AddSection({
-        Position = "left",
-        Name = "Indicators"
+    local VisualSection = Visual:AddSection({
+        Name = "Indicators",
+        Position = "left"
     })
 
-    VisualSec:AddToggle({
+    VisualSection:AddToggle({
         Name = "Highlight Ball",
-        Callback = function(v)
+        Callback = function(Value)
             local ball = GetBall()
-            if ball then
-                if v then
-                    local h = Instance.new("Highlight", ball)
+            if not ball then return end
+
+            if Value then
+                if not ball:FindFirstChild("TWISTZZ_HIGHLIGHT") then
+                    local h = Instance.new("Highlight")
+                    h.Name = "TWISTZZ_HIGHLIGHT"
                     h.FillColor = Color3.fromRGB(255, 170, 0)
-                else
-                    for _, x in pairs(ball:GetChildren()) do
-                        if x:IsA("Highlight") then x:Destroy() end
-                    end
+                    h.OutlineColor = Color3.fromRGB(255, 255, 255)
+                    h.Parent = ball
                 end
+            else
+                local h = ball:FindFirstChild("TWISTZZ_HIGHLIGHT")
+                if h then h:Destroy() end
             end
         end
     })
 end
 
----------------------------------------------------
---// CORE LOOP
----------------------------------------------------
+----------------------------------------------------
+--// CORE LOOP (SAFE + STABLE)
+----------------------------------------------------
 RunService.Heartbeat:Connect(function()
     local char = LocalPlayer.Character
-    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+    local hrp  = char and char:FindFirstChild("HumanoidRootPart")
     local ball = GetBall()
 
     if not char or not hrp or not ball then return end
 
-    local dist = (ball.Position - hrp.Position).Magnitude
+    local distance = (ball.Position - hrp.Position).Magnitude
 
     -- Rage Reach
-    if ReachEnabled and dist <= ReachDistance then
+    if ReachEnabled and distance <= ReachDistance then
         ball.Size = Vector3.new(ReachSize, ReachSize, ReachSize)
 
-        if BallTP then
-            ball.CFrame = hrp.CFrame * CFrame.new(0, -2, -2)
+        if BallTeleport then
+            ball.AssemblyLinearVelocity = Vector3.zero
+            ball.CFrame = hrp.CFrame * CFrame.new(0, -2.2, -2.5)
         end
     end
 
-    -- Legit Reach
-    if LegitReach and dist <= ReachDistance then
+    -- Legit Reach (Smooth magnet)
+    if LegitReach and distance <= ReachDistance then
         ball.CFrame = ball.CFrame:Lerp(
             hrp.CFrame * CFrame.new(0, -2.5, -3),
-            0.15
+            0.12
         )
     end
 end)
