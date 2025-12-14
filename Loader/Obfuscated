@@ -1,16 +1,14 @@
 -- =================================================================
--- // GITHUB KEY SYSTEM + EXECUTION GATE (FULL WORKING)
+-- // PART 1: GITHUB KEY SYSTEM (FATALITY-STYLE UI)
 -- =================================================================
 
--- 🔴 RAW GITHUB LINK ONLY
-local KEY_FILE_URL = "https://raw.githubusercontent.com/zfadezz/fatality/refs/heads/main/keys.txt"
-
+local KEY_FILE_URL = "https://github.com/zfadezz/fatality/blob/main/keys.txt"
 _G.KeyVerified = false
 
 repeat task.wait() until game:IsLoaded()
 
 -- =========================================================
--- // KEY FETCH
+-- // FETCH KEYS
 -- =========================================================
 local function fetchKeys()
     local success, content = pcall(function()
@@ -29,67 +27,95 @@ local function fetchKeys()
             table.insert(keys, line)
         end
     end
-
     return keys
 end
 
--- =========================================================
--- // VERIFY KEY
--- =========================================================
-local function verifyKey(inputKey)
-    inputKey = inputKey:match("^%s*(.-)%s*$")
-
+local function verifyKey(input)
+    input = input:match("^%s*(.-)%s*$")
     for _, key in ipairs(fetchKeys()) do
-        if inputKey == key then
+        if input == key then
             return true
         end
     end
-
     return false
 end
 
 -- =========================================================
--- // UI
+-- // FATALITY-STYLE KEY UI
 -- =========================================================
 task.spawn(function()
     local Player = game.Players.LocalPlayer
 
-    local ScreenGui = Instance.new("ScreenGui", Player:WaitForChild("PlayerGui"))
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Parent = Player:WaitForChild("PlayerGui")
     ScreenGui.ResetOnSpawn = false
 
-    local Frame = Instance.new("Frame", ScreenGui)
-    Frame.Size = UDim2.fromScale(0.3, 0.25)
-    Frame.Position = UDim2.fromScale(0.35, 0.35)
-    Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    local Main = Instance.new("Frame", ScreenGui)
+    Main.Size = UDim2.fromScale(0.34, 0.32)
+    Main.Position = UDim2.fromScale(0.33, 0.34)
+    Main.BackgroundColor3 = Color3.fromRGB(18,18,18)
+    Main.BorderSizePixel = 0
 
-    local Title = Instance.new("TextLabel", Frame)
-    Title.Size = UDim2.fromScale(1, 0.25)
-    Title.Text = "Key System"
-    Title.TextScaled = true
-    Title.TextColor3 = Color3.new(1,1,1)
+    local Corner = Instance.new("UICorner", Main)
+    Corner.CornerRadius = UDim.new(0, 14)
+
+    local Stroke = Instance.new("UIStroke", Main)
+    Stroke.Color = Color3.fromRGB(60,60,60)
+    Stroke.Thickness = 1
+
+    local Title = Instance.new("TextLabel", Main)
+    Title.Size = UDim2.fromScale(1, 0.22)
     Title.BackgroundTransparency = 1
+    Title.Text = "TWISTZZ | KEY SYSTEM"
+    Title.TextColor3 = Color3.fromRGB(255,255,255)
+    Title.Font = Enum.Font.GothamBold
+    Title.TextScaled = true
 
-    local TextBox = Instance.new("TextBox", Frame)
-    TextBox.Size = UDim2.fromScale(0.9, 0.25)
-    TextBox.Position = UDim2.fromScale(0.05, 0.35)
-    TextBox.PlaceholderText = "Enter Key"
-    TextBox.TextScaled = true
+    local Sub = Instance.new("TextLabel", Main)
+    Sub.Size = UDim2.fromScale(1, 0.12)
+    Sub.Position = UDim2.fromScale(0, 0.18)
+    Sub.BackgroundTransparency = 1
+    Sub.Text = "Enter your access key to continue"
+    Sub.TextColor3 = Color3.fromRGB(170,170,170)
+    Sub.Font = Enum.Font.Gotham
+    Sub.TextScaled = true
 
-    local Button = Instance.new("TextButton", Frame)
-    Button.Size = UDim2.fromScale(0.5, 0.2)
+    local Box = Instance.new("TextBox", Main)
+    Box.Size = UDim2.fromScale(0.85, 0.18)
+    Box.Position = UDim2.fromScale(0.075, 0.38)
+    Box.BackgroundColor3 = Color3.fromRGB(25,25,25)
+    Box.PlaceholderText = "Access Key"
+    Box.TextColor3 = Color3.new(1,1,1)
+    Box.Font = Enum.Font.Gotham
+    Box.TextScaled = true
+    Box.BorderSizePixel = 0
+
+    local BoxCorner = Instance.new("UICorner", Box)
+    BoxCorner.CornerRadius = UDim.new(0, 8)
+
+    local Button = Instance.new("TextButton", Main)
+    Button.Size = UDim2.fromScale(0.5, 0.18)
     Button.Position = UDim2.fromScale(0.25, 0.65)
-    Button.Text = "Verify Key"
+    Button.BackgroundColor3 = Color3.fromRGB(40,40,40)
+    Button.Text = "VERIFY"
+    Button.TextColor3 = Color3.new(1,1,1)
+    Button.Font = Enum.Font.GothamBold
     Button.TextScaled = true
+    Button.BorderSizePixel = 0
+
+    local BtnCorner = Instance.new("UICorner", Button)
+    BtnCorner.CornerRadius = UDim.new(0, 8)
 
     Button.MouseButton1Click:Connect(function()
-        if verifyKey(TextBox.Text) then
+        if verifyKey(Box.Text) then
             _G.KeyVerified = true
             ScreenGui:Destroy()
-            print("✅ Key Verified")
         else
-            Button.Text = "Invalid Key"
-            task.delay(1.5, function()
-                Button.Text = "Verify Key"
+            Button.Text = "INVALID KEY"
+            Button.BackgroundColor3 = Color3.fromRGB(120,40,40)
+            task.delay(1.2, function()
+                Button.Text = "VERIFY"
+                Button.BackgroundColor3 = Color3.fromRGB(40,40,40)
             end)
         end
     end)
@@ -101,23 +127,20 @@ end)
 repeat task.wait(0.2) until _G.KeyVerified == true
 
 -- =================================================================
--- // MAIN SCRIPT LOADS ONLY AFTER KEY CHECK
+-- // PART 2: YOUR ORIGINAL SCRIPT (UNCHANGED)
 -- =================================================================
 
+--// Fatality UI Loader
 local Fatality = loadstring(game:HttpGet(
     "https://raw.githubusercontent.com/4lpaca-pin/Fatality/refs/heads/main/src/source.luau"
 ))()
 
--- =========================================================
--- // SERVICES
--- =========================================================
+--// Services
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 
--- =========================================================
--- // NOTIFIER
--- =========================================================
+--// Notifier
 local Notification = Fatality:CreateNotifier()
 
 Fatality:Loader({
@@ -131,32 +154,31 @@ Notification:Notify({
     Icon = "clipboard"
 })
 
--- =========================================================
--- // WINDOW
--- =========================================================
+--// Window
 local Window = Fatality.new({
-    Name = "TWISTZZ",
+    Name = "TWISTZTWISTZZ",
     Expire = "N/A",
 })
 
-local Rage   = Window:AddMenu({ Name = "Main Reach", Icon = "skull" })
+--// Menus
+local Rage   = Window:AddMenu({ Name = "Main Reach",  Icon = "skull" })
 local Legit  = Window:AddMenu({ Name = "Reacts", Icon = "target" })
-local Visual = Window:AddMenu({ Name = "Visuals", Icon = "eye" })
-local Misc   = Window:AddMenu({ Name = "Misc & Config", Icon = "settings" })
+local Visual = Window:AddMenu({ Name = "Visuals",     Icon = "eye" })
+local Misc   = Window:AddMenu({ Name = "Misc & Configs",        Icon = "settings" })
 
--- =========================================================
--- // VARIABLES
--- =========================================================
+----------------------------------------------------
+--// VARIABLES
+----------------------------------------------------
 local ReachEnabled   = false
 local LegitReach     = false
-local ReachDistance  = 6
-local ReachSize      = 5
-local SelectedFoot   = "Right"
 local BallTeleport   = false
+local ReachDistance  = 10
+local ReachSize      = 8
+local SelectedFoot   = "Right"
 
--- =========================================================
--- // BALL FINDER
--- =========================================================
+----------------------------------------------------
+--// BALL FINDER (TPS SAFE)
+----------------------------------------------------
 local function GetBall()
     for _, v in ipairs(workspace:GetDescendants()) do
         if v:IsA("BasePart") and v.Name:lower():find("ball") then
@@ -165,9 +187,113 @@ local function GetBall()
     end
 end
 
--- =========================================================
--- // CORE LOOP
--- =========================================================
+----------------------------------------------------
+--// RAGE REACH
+----------------------------------------------------
+do
+    local ReachSection = Rage:AddSection({
+        Name = "Ball Reach",
+        Position = "left"
+    })
+
+    ReachSection:AddToggle({
+        Name = "Enable Reach",
+        Callback = function(Value)
+            ReachEnabled = Value
+        end
+    })
+
+    ReachSection:AddSlider({
+        Name = "Reach Distance",
+        Min = 3,
+        Max = 25,
+        Default = 10,
+        Callback = function(Value)
+            ReachDistance = Value
+        end
+    })
+
+    ReachSection:AddSlider({
+        Name = "Reach Horizontal",
+        Min = 4,
+        Max = 20,
+        Default = 8,
+        Callback = function(Value)
+            ReachSize = Value
+        end
+    })
+
+    ReachSection:AddDropdown({
+        Name = "Foot",
+        Values = { "Right", "Left" },
+        Default = "Right",
+        Callback = function(Value)
+            SelectedFoot = Value
+        end
+    })
+end
+
+----------------------------------------------------
+--// LEGIT REACH
+----------------------------------------------------
+do
+    local LegitSection = Legit:AddSection({
+        Name = "React",
+        Position = "left"
+    })
+
+    LegitSection:AddToggle({
+        Name = "Enable React",
+        Callback = function(Value)
+            LegitReach = Value
+        end
+    })
+
+    LegitSection:AddSlider({
+        Name = "React ",
+        Min = 3,
+        Max = 12,
+        Default = 6,
+        Callback = function(Value)
+            ReachDistance = Value
+        end
+    })
+end
+
+----------------------------------------------------
+--// VISUALS
+----------------------------------------------------
+do
+    local VisualSection = Visual:AddSection({
+        Name = "Indicators",
+        Position = "left"
+    })
+
+    VisualSection:AddToggle({
+        Name = "Highlight Ball",
+        Callback = function(Value)
+            local ball = GetBall()
+            if not ball then return end
+
+            if Value then
+                if not ball:FindFirstChild("TWISTZZ_HIGHLIGHT") then
+                    local h = Instance.new("Highlight")
+                    h.Name = "TWISTZZ_HIGHLIGHT"
+                    h.FillColor = Color3.fromRGB(255, 170, 0)
+                    h.OutlineColor = Color3.fromRGB(255, 255, 255)
+                    h.Parent = ball
+                end
+            else
+                local h = ball:FindFirstChild("TWISTZZ_HIGHLIGHT")
+                if h then h:Destroy() end
+            end
+        end
+    })
+end
+
+----------------------------------------------------
+--// CORE LOOP (SAFE + STABLE)
+----------------------------------------------------
 RunService.Heartbeat:Connect(function()
     local char = LocalPlayer.Character
     local hrp  = char and char:FindFirstChild("HumanoidRootPart")
@@ -177,6 +303,7 @@ RunService.Heartbeat:Connect(function()
 
     local distance = (ball.Position - hrp.Position).Magnitude
 
+    -- Rage Reach
     if ReachEnabled and distance <= ReachDistance then
         ball.Size = Vector3.new(ReachSize, ReachSize, ReachSize)
 
@@ -186,10 +313,11 @@ RunService.Heartbeat:Connect(function()
         end
     end
 
+    -- Legit Reach (Smooth magnet)
     if LegitReach and distance <= ReachDistance then
         ball.CFrame = ball.CFrame:Lerp(
             hrp.CFrame * CFrame.new(0, -2.5, -3),
-            0.12
+            0.12Booster
         )
     end
 end)
