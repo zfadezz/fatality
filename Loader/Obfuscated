@@ -39,7 +39,6 @@ local Misc   = Window:AddMenu({ Name = "Misc & Config",        Icon = "settings"
 ----------------------------------------------------
 local ReachEnabled   = false
 local LegitReach     = false
-local BallTeleport   = false
 local ReachDistance  = 6
 local ReachSize      = 5
 local SelectedFoot   = "Right"
@@ -99,14 +98,6 @@ do
             SelectedFoot = Value
         end
     })
-
-    ReachSection:AddToggle({
-        Name = "Ball Teleport",
-        Risky = true,
-        Callback = function(Value)
-            BallTeleport = Value
-        end
-    })
 end
 
 ----------------------------------------------------
@@ -119,21 +110,11 @@ do
     })
 
     LegitSection:AddToggle({
-        Name = "Enable Better Reach",
+        Name = "Enable Better React",
         Callback = function(Value)
             LegitReach = Value
         end
-    })
-
-    LegitSection:AddSlider({
-        Name = "React Slider",
-        Min = 3,
-        Max = 12,
-        Default = 6,
-        Callback = function(Value)
-            ReachDistance = Value
-        end
-    })
+    })      
 end
 
 ----------------------------------------------------
