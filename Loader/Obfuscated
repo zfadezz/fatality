@@ -1,249 +1,123 @@
 -- =================================================================
--- // PART 1: SIMPLE KEY FILE VERIFICATION SYSTEM
+-- // GITHUB KEY SYSTEM + EXECUTION GATE (FULL WORKING)
 -- =================================================================
 
--- ⚠️ IMPORTANT: REPLACE THIS URL WITH THE DIRECT LINK TO YOUR KEY .TXT FILE
-local KEY_FILE_URL = "keys.txt" 
+-- 🔴 RAW GITHUB LINK ONLY
+local KEY_FILE_URL = "https://raw.githubusercontent.com/USERNAME/REPO/main/keys.txt"
 
--- Global flag to control main script execution. Set to true on successful key check.
 _G.KeyVerified = false
 
-repeat task.wait(1) until game:IsLoaded() or game.Players.LocalPlayer;
+repeat task.wait() until game:IsLoaded()
 
-local HttpService = game:GetService("HttpService")
-
--- Function to fetch the key file content and parse it into a table.
+-- =========================================================
+-- // KEY FETCH
+-- =========================================================
 local function fetchKeys()
-    -- Use game:HttpGet (standard for most exploits)
-    local success, content = pcall(game.HttpGet, game, KEY_FILE_URL)
-    
-    if success and content and typeof(content) == "string" then
-        local keys = {}
-        -- Split content by newline to get individual keys
-        for key in string.gmatch(content, "[^\r\n]+") do
-            table.insert(keys, key)
-        end
-        return keys
+    local success, content = pcall(function()
+        return game:HttpGet(KEY_FILE_URL)
+    end)
+
+    if not success or type(content) ~= "string" then
+        warn("Failed to fetch key file")
+        return {}
     end
-    print("Error: Could not fetch key file or file content is invalid.")
-    return nil
+
+    local keys = {}
+    for line in content:gmatch("[^\r\n]+") do
+        line = line:match("^%s*(.-)%s*$")
+        if line ~= "" then
+            table.insert(keys, line)
+        end
+    end
+
+    return keys
 end
 
--- Function to check if the input key is in the fetched list.
+-- =========================================================
+-- // VERIFY KEY
+-- =========================================================
 local function verifyKey(inputKey)
-    local keys = fetchKeys()
-    
-    if not keys then
-        return false
-    end
+    inputKey = inputKey:match("^%s*(.-)%s*$")
 
-    -- Trim whitespace and check against the fetched keys (case-insensitive for safety)
-    local trimmedInputKey = string.gsub(inputKey, "%s", "")
-    local upperInputKey = string.upper(trimmedInputKey)
-
-    for _, validKey in ipairs(keys) do
-        local trimmedValidKey = string.gsub(validKey, "%s", "")
-        if upperInputKey == string.upper(trimmedValidKey) then
+    for _, key in ipairs(fetchKeys()) do
+        if inputKey == key then
             return true
         end
     end
+
     return false
 end
 
+-- =========================================================
+-- // UI
+-- =========================================================
 task.spawn(function()
-    local ScreenGui = Instance.new("ScreenGui")
-    local Frame = Instance.new("Frame")
-    local Topbar = Instance.new("Frame")
-    local Exit = Instance.new("TextButton")
-    local minimize = Instance.new("TextButton")
-    local Frame_2 = Instance.new("Frame")
-    -- local Getkey = Instance.new("TextButton") -- REMOVED
-    local Checkkey = Instance.new("TextButton")
-    local TextBox = Instance.new("TextBox")
-    local TextLabel = Instance.new("TextLabel")
-    
+    local Player = game.Players.LocalPlayer
 
-    ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    
-    Frame.Parent = ScreenGui
-    
-    Frame.BackgroundColor3 = Color3.fromRGB(76, 76, 76)
-    Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    Frame.BorderSizePixel = 0
-    Frame.Position = UDim2.new(0.286729872, 0, 0.295880139, 0)
-    Frame.Size = UDim2.new(0, 359, 0, 217)
-    
-    Topbar.Name = "Topbar"
-    Topbar.Parent = Frame
-    Topbar.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    Topbar.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    Topbar.BorderSizePixel = 0
-    Topbar.Size = UDim2.new(0, 359, 0, 27)
-    
-    Exit.Name = "Exit"
-    Exit.Parent = Topbar
- 
-    Exit.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-    Exit.BackgroundTransparency = 0.300
-    Exit.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    Exit.BorderSizePixel = 0
-    Exit.Position = UDim2.new(0.905292451, 0, 0.111111112, 0)
-    Exit.Size = UDim2.new(0, 25, 0, 20)
-    Exit.Font = Enum.Font.SourceSans
-    Exit.Text = "X"
-    Exit.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Exit.TextScaled = true
-    Exit.TextSize = 14.000
-    Exit.TextWrapped = true
-    
-    minimize.Name = "minimize"
-    minimize.Parent = Topbar
- 
-    minimize.BackgroundColor3 = Color3.fromRGB(85, 255, 0)
-    minimize.BackgroundTransparency = 0.300
-    minimize.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    minimize.BorderSizePixel = 0
-    minimize.Position = UDim2.new(0.810584962, 0, 0.111111112, 0)
-    minimize.Size = UDim2.new(0, 25, 0, 20)
-    minimize.Font = Enum.Font.SourceSans
-    minimize.Text = "-"
-    minimize.TextColor3 = Color3.fromRGB(255, 255, 255)
-    minimize.TextScaled = true
-    minimize.TextSize = 14.000
-    minimize.TextWrapped = true
-    
-    Frame_2.Parent = Frame
-    Frame_2.BackgroundColor3 = Color3.fromRGB(255, 
-    255, 255)
-    Frame_2.BackgroundTransparency = 1.000
-    Frame_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    Frame_2.BorderSizePixel = 0
-    Frame_2.Position = UDim2.new(0, 0, 0.124423966, 0)
-    Frame_2.Size = UDim2.new(0, 359, 0, 189)
-    
-    -- Removed the Getkey Button UI code.
-    
-    Checkkey.Name = "Checkkey"
-    Checkkey.Parent = Frame_2
-    Checkkey.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    Checkkey.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    Checkkey.BorderSizePixel = 0
-    -- Adjusted position to be centered vertically now that Getkey is gone
-    Checkkey.Position = UDim2.new(0.317548752, 0, 0.65, 0) 
-    Checkkey.Size = UDim2.new(0, 130, 0, 32)
-    Checkkey.Font = Enum.Font.SourceSans
-    Checkkey.Text 
-    = "Check Key"
-    Checkkey.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Checkkey.TextScaled = true
-    Checkkey.TextSize = 14.000
-    Checkkey.TextWrapped = true
-    
-    TextBox.Parent = Frame_2
-    TextBox.BackgroundColor3 = Color3.fromRGB(139, 139, 139)
-    TextBox.BackgroundTransparency = 0.600
-    TextBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    TextBox.BorderSizePixel = 0
-    TextBox.Position = UDim2.new(0.0779944286, 0, 0.137566134, 0)
-    TextBox.Size = UDim2.new(0, 304, 0, 42)
-    TextBox.Font = Enum.Font.SourceSans
-    TextBox.Text = ""
-    TextBox.TextTransparency 
-    = 1
-    TextBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+    local ScreenGui = Instance.new("ScreenGui", Player:WaitForChild("PlayerGui"))
+    ScreenGui.ResetOnSpawn = false
+
+    local Frame = Instance.new("Frame", ScreenGui)
+    Frame.Size = UDim2.fromScale(0.3, 0.25)
+    Frame.Position = UDim2.fromScale(0.35, 0.35)
+    Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+
+    local Title = Instance.new("TextLabel", Frame)
+    Title.Size = UDim2.fromScale(1, 0.25)
+    Title.Text = "Key System"
+    Title.TextScaled = true
+    Title.TextColor3 = Color3.new(1,1,1)
+    Title.BackgroundTransparency = 1
+
+    local TextBox = Instance.new("TextBox", Frame)
+    TextBox.Size = UDim2.fromScale(0.9, 0.25)
+    TextBox.Position = UDim2.fromScale(0.05, 0.35)
+    TextBox.PlaceholderText = "Enter Key"
     TextBox.TextScaled = true
-    TextBox.TextSize = 14.000
-    TextBox.TextWrapped = true
-    
-    TextLabel.Parent = Frame_2
-    TextLabel.BackgroundColor3 = Color3.fromRGB(211, 211, 211)
-    TextLabel.BackgroundTransparency = 1.000
-    TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    TextLabel.BorderSizePixel = 0
-    TextLabel.Position = UDim2.new(0.0779944286, 0, 0.137566134, 0)
-    TextLabel.Size = UDim2.new(0, 304, 0, 42)
-    TextLabel.ZIndex = 2
-    TextLabel.Font = Enum.Font.SourceSans
-    TextLabel.Text 
-    = "In Put Your Key"
-    TextLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
-    TextLabel.TextScaled = true
-    TextLabel.TextSize = 14.000
-    TextLabel.TextStrokeTransparency = 0.830
-    TextLabel.TextTransparency = 0.550
-    TextLabel.TextWrapped = true
-    
-    
-    
-    
-    TextBox:GetPropertyChangedSignal("Text"):Connect(function(text)
-        if TextBox.Text == "" then
-            TextLabel.Text =  "In Put Your Key"
-        
-        else
-            TextLabel.Text = TextBox.Text
-        end
-    end)
-    
-    Checkkey.MouseButton1Down:Connect(function() 
-        if TextBox and TextBox.Text then
-            
-            local Verify = verifyKey(TextBox.Text)
-            
-            if Verify then
-                ScreenGui:Destroy() -- DESTROY UI ON SUCCESS
-                _G.KeyVerified = true -- SET GLOBAL FLAG
-                print("Key Verified! Starting exploit.")
-            else
-                print("Key is invalid or failed to fetch key file.")
-            end 
-        end	
-    end)
-    
-    -- Removed Getkey event
-    
-    Exit.MouseButton1Down:Connect(function()
-        if ScreenGui then
- 
+
+    local Button = Instance.new("TextButton", Frame)
+    Button.Size = UDim2.fromScale(0.5, 0.2)
+    Button.Position = UDim2.fromScale(0.25, 0.65)
+    Button.Text = "Verify Key"
+    Button.TextScaled = true
+
+    Button.MouseButton1Click:Connect(function()
+        if verifyKey(TextBox.Text) then
+            _G.KeyVerified = true
             ScreenGui:Destroy()
-            error("Key verification canceled by user.") -- STOP EXECUTION ON EXIT
+            print("✅ Key Verified")
+        else
+            Button.Text = "Invalid Key"
+            task.delay(1.5, function()
+                Button.Text = "Verify Key"
+            end)
         end
     end)
-    
-    
-    minimize.MouseButton1Down:Connect(function()
-        if ScreenGui then
-            ScreenGui.Enabled = false
-        end
-    end)
-    
 end)
 
--- =================================================================
--- // PART 2: THE EXECUTION GATE
--- =================================================================
-
--- This loop prevents the main script from running until the key is valid.
-repeat
-    task.wait(1)
-until _G.KeyVerified == true
+-- =========================================================
+-- // EXECUTION GATE
+-- =========================================================
+repeat task.wait(0.2) until _G.KeyVerified == true
 
 -- =================================================================
--- // PART 3: YOUR MAIN FATALITY EXPLOIT CODE
+-- // MAIN SCRIPT LOADS ONLY AFTER KEY CHECK
 -- =================================================================
 
---// Fatality UI Loader
 local Fatality = loadstring(game:HttpGet(
     "https://raw.githubusercontent.com/4lpaca-pin/Fatality/refs/heads/main/src/source.luau"
 ))()
 
---// Services
+-- =========================================================
+-- // SERVICES
+-- =========================================================
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 
---// Notifier
+-- =========================================================
+-- // NOTIFIER
+-- =========================================================
 local Notification = Fatality:CreateNotifier()
 
 Fatality:Loader({
@@ -257,31 +131,32 @@ Notification:Notify({
     Icon = "clipboard"
 })
 
---// Window
+-- =========================================================
+-- // WINDOW
+-- =========================================================
 local Window = Fatality.new({
     Name = "TWISTZZ",
     Expire = "N/A",
 })
 
---// Menus
-local Rage   = Window:AddMenu({ Name = "Main Reach",  Icon = "skull" })
+local Rage   = Window:AddMenu({ Name = "Main Reach", Icon = "skull" })
 local Legit  = Window:AddMenu({ Name = "Reacts", Icon = "target" })
-local Visual = Window:AddMenu({ Name = "Visuals",     Icon = "eye" })
-local Misc   = Window:AddMenu({ Name = "Misc & Config",        Icon = "settings" })
+local Visual = Window:AddMenu({ Name = "Visuals", Icon = "eye" })
+local Misc   = Window:AddMenu({ Name = "Misc & Config", Icon = "settings" })
 
-----------------------------------------------------
---// VARIABLES
-----------------------------------------------------
+-- =========================================================
+-- // VARIABLES
+-- =========================================================
 local ReachEnabled   = false
 local LegitReach     = false
 local ReachDistance  = 6
 local ReachSize      = 5
 local SelectedFoot   = "Right"
-local BallTeleport = false 
+local BallTeleport   = false
 
-----------------------------------------------------
---// BALL FINDER (TPS SAFE)
-----------------------------------------------------
+-- =========================================================
+-- // BALL FINDER
+-- =========================================================
 local function GetBall()
     for _, v in ipairs(workspace:GetDescendants()) do
         if v:IsA("BasePart") and v.Name:lower():find("ball") then
@@ -290,110 +165,9 @@ local function GetBall()
     end
 end
 
-----------------------------------------------------
---// Main REACH
-----------------------------------------------------
-do
-    local ReachSection = Rage:AddSection({
-        Name = "Ball Reach",
-        Position = "left"
-    })
-
-    ReachSection:AddToggle({
-        Name = "Enable Reach",
-        Callback = function(Value)
-            ReachEnabled = Value
-        end
-    })
-
-    ReachSection:AddSlider({
-        Name = "Reach Distance",
-        Min = 3,
-        Max = 25,
-        Default = 6,
-        Callback = function(Value)
-            ReachDistance = Value
-        end
-    })
-
-    ReachSection:AddSlider({
-        Name = "Reach Vertical",
-        Min = 4,
-        Max = 20,
-        Default = 5,
-        Callback = function(Value)
-            ReachSize = Value
-        end
-    })
-
-    ReachSection:AddDropdown({
-        Name = "Foot Selection",
-        Values = { "Right", "Left" },
-        Default = "Right",
-        Callback = function(Value)
-            SelectedFoot = Value
-        end
-    })
-    
-    ReachSection:AddToggle({
-        Name = "Enable Ball Teleport",
-        Callback = function(Value)
-            BallTeleport = Value
-        end
-    })
-end
-
-----------------------------------------------------
---// OTHER REACT
-----------------------------------------------------
-do
-    local LegitSection = Legit:AddSection({
-        Name = "React",
-        Position = "left"
-    })
-
-    LegitSection:AddToggle({
-        Name = "Enable Better React",
-        Callback = function(Value)
-            LegitReach = Value
-        end
-    })      
-end
-
-----------------------------------------------------
---// VISUALS
-----------------------------------------------------
-do
-    local VisualSection = Visual:AddSection({
-        Name = "Indicators",
-        Position = "left"
-    })
-
-    VisualSection:AddToggle({
-        Name = "Highlight Ball",
-        Callback = function(Value)
-            local ball = GetBall()
-            if not ball then return end
-
-            if Value then
-                if not ball:FindFirstChild("TWISTZZ_HIGHLIGHT") then
-                    local h = Instance.new("Highlight")
-                    h.Name = "TWISTZZ_HIGHLIGHT"
-                    h.FillColor = Color3.fromRGB(255, 170, 0)
-                    h.OutlineColor = Color3.fromRGB(255, 255, 255)
-                    h.Parent = ball
-                end
-            else
-                local h = ball:FindFirstChild("TWISTZZ_HIGHLIGHT")
-                if h then h:Destroy() end
-            end
-        end
-    })
-end
-
-----------------------------------------------------
---// CORE LOOP (SAFE + STABLE)
-----------------------------------------------------
+-- =========================================================
+-- // CORE LOOP
+-- =========================================================
 RunService.Heartbeat:Connect(function()
     local char = LocalPlayer.Character
     local hrp  = char and char:FindFirstChild("HumanoidRootPart")
@@ -403,7 +177,6 @@ RunService.Heartbeat:Connect(function()
 
     local distance = (ball.Position - hrp.Position).Magnitude
 
-    -- Rage Reach
     if ReachEnabled and distance <= ReachDistance then
         ball.Size = Vector3.new(ReachSize, ReachSize, ReachSize)
 
@@ -413,7 +186,6 @@ RunService.Heartbeat:Connect(function()
         end
     end
 
-    -- Legit Reach (Smooth magnet)
     if LegitReach and distance <= ReachDistance then
         ball.CFrame = ball.CFrame:Lerp(
             hrp.CFrame * CFrame.new(0, -2.5, -3),
