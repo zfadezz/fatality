@@ -2,19 +2,19 @@ local Fatality = loadstring(game:HttpGet("https://raw.githubusercontent.com/4lpa
 local Notification = Fatality:CreateNotifier();
 
 Fatality:Loader({
-	Name = "FATALITY",
+	Name = "TWISTZZ",
 	Duration = 4
 });
 
 Notification:Notify({
-	Title = "FATALITY",
-	Content = "Hello, "..game.Players.LocalPlayer.DisplayName..' Welcome back!',
+	Title = "TWISTZZ",
+	Content = "Hello, "..game.Players.LocalPlayer.DisplayName..' welcome back!',
 	Icon = "clipboard"
 })
 
 local Window = Fatality.new({
-	Name = "FATALITY",
-	Expire = "never",
+	Name = "TWISTZZ",
+	Expire = "N/A",
 });
 
 local Rage = Window:AddMenu({
