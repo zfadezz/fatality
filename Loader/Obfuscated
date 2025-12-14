@@ -8,7 +8,7 @@ Fatality:Loader({
 
 local Config = Window:AddConfig();
 
-Config:Init("Counter-Strike 2","Fatality-Win");
+Config:Init("BasePlate","Fatality-Win");
 
 local Rage = Window:AddMenu({
 	Name = "RAGE",
