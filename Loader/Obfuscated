@@ -18,22 +18,22 @@ local Window = Fatality.new({
 });
 
 local Rage = Window:AddMenu({
-	Name = "RAGE",
+	Name = "Reach & Misc",
 	Icon = "skull"
 })
 
 local Legit = Window:AddMenu({
-	Name = "LEGIT",
+	Name = "Other Reach Method",
 	Icon = "target"
 })
 
 local Visual = Window:AddMenu({
-	Name = "VISUAL",
+	Name = "VISUALS",
 	Icon = "eye"
 })
 
 local Misc = Window:AddMenu({
-	Name = "MISC",
+	Name = "CONFIG",
 	Icon = "settings"
 })
 
@@ -48,23 +48,23 @@ local Lua = Window:AddMenu({
 })
 
 do
-	local Weapon = Rage:AddSection({
+	local Rage = Rage:AddSection({
 		Position = 'left',
-		Name = "WEAPON"
+		Name = "Reach"
 	});
 	
 	local Extra = Rage:AddSection({
 		Position = 'center',
-		Name = "EXTREA"
+		Name = "Reach Settings"
 	});
 	
 	local General = Rage:AddSection({
 		Position = 'right',
-		Name = "GENERAL"
+		Name = "TWISTZZ"
 	});
 	
 	Weapon:AddSlider({
-		Name = "Hit-chance",
+		Name = "Reach Hitbox",
 		Default = 61
 	})
 	
@@ -75,14 +75,14 @@ do
 	})
 	
 	Weapon:AddSlider({
-		Name = "Min-damage",
+		Name = "Min-Reach",
 		Type = "%",
 		Default = 85
 	})
 	
 	Weapon:AddDropdown({
-		Name = "Hitboxes",
-		Values = {"Head",'Neck','Arms','Legs'}
+		Name = "Leg hitboxes",
+		Values = {"Left",'Right'}
 	})
 	
 	Weapon:AddDropdown({
