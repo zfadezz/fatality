@@ -3,7 +3,7 @@
 -- =================================================================
 
 -- 🔴 RAW GITHUB LINK ONLY
-local KEY_FILE_URL = "https://raw.githubusercontent.com/USERNAME/REPO/main/keys.txt"
+local KEY_FILE_URL = "https://raw.githubusercontent.com/zfadezz/fatality/refs/heads/main/keys.txt"
 
 _G.KeyVerified = false
 
