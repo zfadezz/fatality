@@ -3,7 +3,7 @@
 -- =================================================================
 
 -- ⚠️ IMPORTANT: REPLACE THIS URL WITH THE DIRECT LINK TO YOUR KEY .TXT FILE
-local KEY_FILE_URL = "YOUR_KEY_FILE_URL_HERE" 
+local KEY_FILE_URL = "keys.txt" 
 
 -- Global flag to control main script execution. Set to true on successful key check.
 _G.KeyVerified = false
