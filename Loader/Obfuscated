@@ -81,7 +81,7 @@ do
     })
 
     ReachSection:AddSlider({
-        Name = "Reach Vertica",
+        Name = "Reach Vertical",
         Min = 4,
         Max = 20,
         Default = 5,
